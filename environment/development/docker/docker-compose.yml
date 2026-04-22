@@ -1,0 +1,60 @@
+services:
+  app:
+    build:
+      context: ../../../
+      dockerfile: build/Dockerfile
+    container_name: sentinel-app
+    restart: always
+    env_file:
+      - ../../../.env
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      smtp:
+        condition: service_healthy
+
+  mysql:
+    image: mysql:8
+    container_name: sentinel-development-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: sentinel
+      MYSQL_USER: sentinel
+      MYSQL_PASSWORD: sentinel
+    ports:
+      - "3306:3306"
+    volumes:
+      - ../../mysql/migration.ddl.sql:/docker-entrypoint-initdb.d/1.sql
+      - ../seeders/mysql/test-data.seeder.sql:/docker-entrypoint-initdb.d/2.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  redis:
+    image: redis:7
+    container_name: sentinel-development-redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  smtp:
+    image: mailhog/mailhog
+    container_name: sentinel-development-mailhog
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "1025"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
