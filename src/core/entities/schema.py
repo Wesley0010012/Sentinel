@@ -36,6 +36,10 @@ class Schema:
     @property
     def data_to_test(self) -> str:
         return self._data_to_test
+    
+    @data_to_test.setter
+    def data_to_test(self, value: str) -> None:
+        self._data_to_test = value
 
     @property
     def version(self) -> SchemaVersion:
