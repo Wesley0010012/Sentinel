@@ -22,7 +22,7 @@ class SMTPAnomalyNotifier(AnomalyNotifier):
         self._send_email(subject, body)
 
     def notify_schema_anomaly(self, schema: Schema) -> None:
-        version_number = getattr(schema.version, "number", None)
+        version_number = getattr(schema.version, "signature", None)
         created_at = getattr(schema.version, "created_at", None)
 
         subject = "[SENTINEL] Anomaly detected"
