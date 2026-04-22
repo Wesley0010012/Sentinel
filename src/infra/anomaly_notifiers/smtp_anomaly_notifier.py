@@ -16,8 +16,8 @@ class SMTPAnomalyNotifier(AnomalyNotifier):
         self._use_tls = config.get("use_tls", True)
 
     def notify_schema_not_found(self, schema_signature: str) -> None:
-        subject = "[SENTINEL] Schema não encontrado"
-        body = f"Schema não encontrado para signature: {schema_signature}"
+        subject = "[SENTINEL] Schema not found"
+        body = f"Schema not found for signature: {schema_signature}"
 
         self._send_email(subject, body)
 
@@ -25,13 +25,13 @@ class SMTPAnomalyNotifier(AnomalyNotifier):
         version_number = getattr(schema.version, "number", None)
         created_at = getattr(schema.version, "created_at", None)
 
-        subject = "[SENTINEL] Anomalia detectada em Schema"
+        subject = "[SENTINEL] Anomaly detected"
         body = (
-            f"Anomalia detectada:\n\n"
+            f"Anomaly detected:\n\n"
             f"ID: {schema.id}\n"
             f"Signature: {schema.signature}\n"
             f"Type: {schema.type.value}\n"
-            f"Payload: {schema.data_to_test}\n" 
+            f"Payload: {schema.data_to_test}\n"
             f"Version: {version_number}\n"
             f"Created At: {created_at}\n"
         )
@@ -39,7 +39,6 @@ class SMTPAnomalyNotifier(AnomalyNotifier):
         self._send_email(subject, body)
 
     def _send_email(self, subject: str, body: str) -> None:
-        print('enviando e-mail')
         msg = EmailMessage()
         msg["Subject"] = subject
         msg["From"] = self._from_email
